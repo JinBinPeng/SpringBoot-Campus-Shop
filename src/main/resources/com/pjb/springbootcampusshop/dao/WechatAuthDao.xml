@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.pjb.springbootcampusshop.dao.WechatAuthDao">
+	<resultMap id="wechatAuthResultMap" type="com.pjb.springbootcampusshop.entity.WechatAuth" autoMapping="true">
+		<id property="wechatAuthId" column="wechat_auth_id"/>
+		<association property="personInfo" column="user_id" javaType="com.pjb.springbootcampusshop.entity.PersonInfo" autoMapping="true"/>
+	</resultMap>
+
+	<select id="queryWechatInfoByOpenId" resultMap="wechatAuthResultMap">
+		SELECT
+		w.wechat_auth_id,
+		w.user_id,
+		w.open_id,
+		w.create_time,
+		p.user_id,
+		p.name,
+		p.birthday,
+		p.gender,
+		p.phone,
+		p.email,
+		p.profile_img,
+		p.customer_flag,
+		p.shop_owner_flag,
+		p.admin_flag,
+		p.create_time,
+		p.last_edit_time,
+		p.enable_status
+		FROM
+		tb_wechat_auth w
+		LEFT JOIN tb_person_info p ON w.user_id = p.user_id
+		WHERE
+		w.open_id = #{openId}
+	</select>
+
+	<insert id="insertWechatAuth" useGeneratedKeys="true" keyProperty="wechatAuthId" keyColumn="wechat_auth_id">
+		INSERT INTO
+		tb_wechat_auth(user_id,open_id,create_time)
+		VALUES
+		(#{userId},#{openId},#{createTime})
+	</insert>
+
+	<delete id="deleteWechatAuth">
+		DELETE FROM
+		tb_wechat_auth
+		WHERE
+		wechat_auth_id = #{wechatAuthId}
+	</delete>
+</mapper>

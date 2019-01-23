@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.pjb.springbootcampusshop.dao.UserAwardMapDao">
+	<resultMap id="userAwardResultMap" type="com.pjb.springbootcampusshop.entity.UserAwardMap" autoMapping="true">
+		<id property="userAwardId" column="user_award_id"/>
+		<association property="user" column="user_id" javaType="com.pjb.springbootcampusshop.entity.PersonInfo" autoMapping="true"/>
+		<association property="award" column="award_id" javaType="com.pjb.springbootcampusshop.entity.Award" autoMapping="true"/>
+		<association property="shop" column="shop_id" javaType="com.pjb.springbootcampusshop.entity.Shop" autoMapping="true"/>
+	</resultMap>
+
+	<select id="queryUserAwardMapList" resultMap="userAwardResultMap">
+		SELECT
+		uam.user_award_id,
+		uam.user_id,
+		uam.award_id,
+		uam.shop_id,
+		uam.user_name,
+		uam.award_name,
+		uam.expire_time,
+		uam.create_time,
+		uam.used_status,
+		uam.point,
+		s.shop_name
+		FROM
+		tb_user_award_map uam
+		LEFT JOIN tb_shop s ON uam.shop_id = s.shop_id
+		<where>
+			<if test="userAwardCondition.userId!=null">
+				and uam.user_id = #{userAwardCondition.userId}
+			</if>
+			<if test="userAwardCondition.shopId!=null">
+				and uam.shop_id = #{userAwardCondition.shopId}
+			</if>
+			<!-- 写like语句的时候 一般都会写成 like '% %' 在mybatis里面写就是应该是 like '%${name} %' 而不是 
+				'%#{name} %' ${name} 是不带单引号的，而#{name} 是带单引号的 -->
+			<if test="userAwardCondition.userName!=null">
+				and uam.user_name like '%${userAwardCondition.userName}%'
+			</if>
+			<if test="userAwardCondition.awardName!=null">
+				and uam.award_name like
+				'%${userAwardCondition.awardName}%'
+			</if>
+			<if test="userAwardCondition.expireTime!=null">
+				and uam.expire_time > #{userAwardCondition.expireTime}
+			</if>
+			<if test="userAwardCondition.usedStatus!=null">
+				and uam.used_status = #{userAwardCondition.usedStatus}
+			</if>
+		</where>
+		LIMIT #{rowIndex},#{pageSize};
+	</select>
+
+	<select id="queryUserAwardMapCount" resultType="int">
+		SELECT
+		count(1)
+		FROM
+		tb_user_award_map
+		<where>
+			<if test="userAwardCondition.userId!=null">
+				and user_id = #{userAwardCondition.userId}
+			</if>
+			<if test="userAwardCondition.shopId!=null">
+				and shop_id = #{userAwardCondition.shopId}
+			</if>
+			<!-- 写like语句的时候 一般都会写成 like '% %' 在mybatis里面写就是应该是 like '%${name} %' 而不是 
+				'%#{name} %' ${name} 是不带单引号的，而#{name} 是带单引号的 -->
+			<if test="userAwardCondition.userName!=null">
+				and user_name like '%${userAwardCondition.userName}%'
+			</if>
+			<if test="userAwardCondition.awardName!=null">
+				and award_name like '%${userAwardCondition.awardName}%'
+			</if>
+			<if test="userAwardCondition.expireTime!=null">
+				and expire_time > #{userAwardCondition.expireTime}
+			</if>
+			<if test="userAwardCondition.usedStatus!=null">
+				and used_status = #{userAwardCondition.usedStatus}
+			</if>
+		</where>
+	</select>
+
+	<select id="queryUserAwardMapById" resultMap="userAwardResultMap">
+		SELECT
+		uam.user_award_id,
+		uam.user_id,
+		uam.award_id,
+		uam.shop_id,
+		uam.user_name,
+		uam.award_name,
+		uam.expire_time,
+		uam.create_time,
+		uam.used_status,
+		uam.point,
+		s.shop_name
+		FROM
+		tb_user_award_map uam
+		LEFT JOIN tb_shop s ON uam.shop_id = s.shop_id
+		WHERE
+		user_award_id = #{userAwardId}
+	</select>
+
+	<insert id="insertUserAwardMap"  useGeneratedKeys="true" keyProperty="userAwardId" keyColumn="user_award_id">
+		INSERT INTO
+		tb_user_award_map(user_id,award_id,shop_id,
+		user_name,award_name,expire_time,create_time,used_status,point)
+		VALUES
+		(#{userId},#{awardId},#{shopId},
+		#{userName},#{awardName},#{expireTime},#{createTime},#{usedStatus},#{point})
+	</insert>
+
+	<update id="updateUserAwardMap">
+		UPDATE
+		tb_user_award_map
+		SET
+		used_status = #{usedStatus}
+		WHERE
+		user_award_id = #{userAwardId}
+		AND user_id = #{userId}
+	</update>
+</mapper>

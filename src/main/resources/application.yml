@@ -1,0 +1,19 @@
+spring:
+  datasource:
+    url: jdbc:mysql://localhost/o2odb?useSSL=false&serverTimezone=UTC
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: root
+    password: 1997
+  redis:
+    host: 127.0.0.1
+    port: 6379
+  thymeleaf:
+    cache: false
+weixin:
+  appid: PTv/7qETW0kO5N0WT223IlBEOUuK0+SO
+  appsecret: jOjEubTD3dTzTbNzX+vREKnTJvvKZRud6c3712kCaGgfJAfVsP+M2w==
+debug: true
+mybatis:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    map-underscore-to-camel-case: true
